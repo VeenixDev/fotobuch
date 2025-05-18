@@ -1,0 +1,12 @@
+services:
+  loki:
+    image: grafana/loki
+    restart: always
+    ports:
+      - "3100:3100"
+    healthcheck:
+      test: [ "CMD", "wget", "-O-", "http://localhost:3100/ready" ]
+      interval: 10s
+      timeout: 15s
+      retries: 10
+      start_period: 10s
