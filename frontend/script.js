@@ -4,6 +4,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let isLoading = false;
     let hasMoreImages = true;
 
+    // Modal elements
+    const modal = document.getElementById('image-modal');
+    const modalImg = document.getElementById('modal-image');
+    const closeBtn = document.querySelector('.close-modal');
+
+    // Function to open the modal with a specific image
+    function openModal(imgSrc) {
+        modalImg.src = imgSrc;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+
+    // Event listeners for closing the modal
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
     // Handle image upload
     const uploadForm = document.getElementById('upload-form');
     const uploadStatus = document.getElementById('upload-status');
@@ -161,6 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.src = `/api/${imageName}`;
 
                 imageItem.appendChild(img);
+
+                // Add click event to show full-size image
+                img.addEventListener('click', () => {
+                    openModal(img.src);
+                });
             });
 
             // Add loading indicator after all images are added, if there are more images
@@ -285,6 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.src = `/api/${imageName}`;
 
                 imageItem.appendChild(img);
+
+                // Add click event to show full-size image
+                img.addEventListener('click', () => {
+                    openModal(img.src);
+                });
             });
 
             // Add the new container to the main container
