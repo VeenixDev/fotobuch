@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hochzeit Putzke</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Hochzeit Putzke</h1>
+    </header>
+    <main>
+        <div class="upload-container">
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="file" id="image-upload" name="images" accept="image/*" required multiple>
+                <button type="submit" id="upload-button">Upload Images</button>
+            </form>
+            <div id="upload-status"></div>
+        </div>
+        <div id="image-container" class="image-grid"></div>
+    </main>
+    <footer>
+        &copy; Sysvisual 2025
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
