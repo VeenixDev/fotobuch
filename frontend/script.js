@@ -130,6 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 placeholder.style.aspectRatio = `${dimensions.width}/${dimensions.height}`;
                 imageItem.appendChild(placeholder);
 
+                // Calculate the grid row span based on aspect ratio
+                // Using 10px grid-auto-rows, calculate how many rows this image should span
+                // For horizontal images (width > height), ensure a minimum row span
+                const aspectRatio = dimensions.height / dimensions.width;
+                const rowSpan = Math.max(5, Math.ceil(aspectRatio * 10)) + 1; // Minimum 5 rows + 1 for margin
+                imageItem.style.gridRowEnd = `span ${rowSpan}`;
+
                 // Now add the item to the container after dimensions are known
                 container.appendChild(imageItem);
 
@@ -205,6 +212,10 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingWrapper.remove();
         }
 
+        // Create a new container for the uploaded images to ensure they stay together
+        const newImagesContainer = document.createElement('div');
+        newImagesContainer.className = 'new-uploads';
+
         // Function to preload image dimensions and set correct aspect ratio
         const preloadImageDimensions = (imageName) => {
             return new Promise((resolve) => {
@@ -232,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }))
         );
 
-        // Wait for all dimensions to be loaded, then add images to the container in order
+        // Wait for all dimensions to be loaded, then add images to the new container in order
         Promise.all(preloadPromises).then(imagesWithDimensions => {
             // Process each image with known dimensions
             imagesWithDimensions.forEach(({ imageName, dimensions }) => {
@@ -245,8 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 placeholder.style.aspectRatio = `${dimensions.width}/${dimensions.height}`;
                 imageItem.appendChild(placeholder);
 
-                // Now add the item to the container after dimensions are known
-                container.appendChild(imageItem);
+                // Calculate the grid row span based on aspect ratio
+                // Using 10px grid-auto-rows, calculate how many rows this image should span
+                // For horizontal images (width > height), ensure a minimum row span
+                const aspectRatio = dimensions.height / dimensions.width;
+                const rowSpan = Math.max(5, Math.ceil(aspectRatio * 10)) + 1; // Minimum 5 rows + 1 for margin
+                imageItem.style.gridRowEnd = `span ${rowSpan}`;
+
+                // Add the item to the new container after dimensions are known
+                newImagesContainer.appendChild(imageItem);
 
                 // Create the image element
                 const img = document.createElement('img');
@@ -273,6 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 imageItem.appendChild(img);
             });
 
+            // Add the new container to the main container
+            container.appendChild(newImagesContainer);
+
             // Add loading indicator if there are more images to load
             if (hasMoreImages) {
                 const newLoadingWrapper = document.createElement('div');
@@ -287,13 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.appendChild(newLoadingWrapper);
             }
 
-            // Scroll to the first new image
+            // Scroll to the new images container
             if (imagesWithDimensions.length > 0) {
                 setTimeout(() => {
-                    const firstNewImage = container.lastElementChild;
-                    if (firstNewImage) {
-                        firstNewImage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    newImagesContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 500);
             }
         });

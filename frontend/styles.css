@@ -36,23 +36,24 @@ main {
     }
 }
 .image-grid {
-    column-count: auto;
-    column-width: 250px;
-    column-gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-auto-rows: 10px;
+    grid-gap: 1rem;
     margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
     .image-grid {
-        column-width: 180px;
-        column-gap: 0.75rem;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-gap: 0.75rem;
     }
 }
 
 @media (max-width: 480px) {
     .image-grid {
-        column-width: 150px;
-        column-gap: 0.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-gap: 0.5rem;
     }
 }
 .image-item {
@@ -61,9 +62,8 @@ main {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
     background-color: #fff;
-    break-inside: avoid;
-    margin-bottom: 1rem;
-    display: inline-block;
+    grid-column-end: span 1;
+    /* grid-row-end will be set dynamically via JavaScript */
     width: 100%;
 }
 .image-item:hover {
@@ -81,7 +81,7 @@ main {
 }
 .image-item img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     transition: opacity 0.3s ease;
 }
@@ -275,4 +275,47 @@ footer {
 }
 .failure {
     color: red;
+}
+
+/* Styling for newly uploaded images container */
+.new-uploads {
+    width: 100%;
+    column-span: all;
+    break-inside: avoid;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+/* Styling for image items in new uploads container */
+.new-uploads .image-item {
+    flex: 1 0 250px;
+    max-width: calc(33.333% - 1rem);
+}
+
+/* Responsive adjustments for new uploads */
+@media (max-width: 768px) {
+    .new-uploads {
+        gap: 0.75rem;
+    }
+
+    .new-uploads .image-item {
+        flex: 1 0 180px;
+        max-width: calc(50% - 0.75rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .new-uploads {
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .new-uploads .image-item {
+        flex: 1 0 150px;
+        max-width: 100%;
+    }
 }
