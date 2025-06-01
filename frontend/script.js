@@ -132,9 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Calculate the grid row span based on aspect ratio
                 // Using 10px grid-auto-rows, calculate how many rows this image should span
-                // For horizontal images (width > height), ensure a minimum row span
-                const aspectRatio = dimensions.height / dimensions.width;
-                const rowSpan = Math.max(5, Math.ceil(aspectRatio * 10)) + 1; // Minimum 5 rows + 1 for margin
+                const rowSpan = Math.ceil((dimensions.height / dimensions.width) * 10) + 1; // +1 for some margin
                 imageItem.style.gridRowEnd = `span ${rowSpan}`;
 
                 // Now add the item to the container after dimensions are known
@@ -258,9 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Calculate the grid row span based on aspect ratio
                 // Using 10px grid-auto-rows, calculate how many rows this image should span
-                // For horizontal images (width > height), ensure a minimum row span
-                const aspectRatio = dimensions.height / dimensions.width;
-                const rowSpan = Math.max(5, Math.ceil(aspectRatio * 10)) + 1; // Minimum 5 rows + 1 for margin
+                const rowSpan = Math.ceil((dimensions.height / dimensions.width) * 10) + 1; // +1 for some margin
                 imageItem.style.gridRowEnd = `span ${rowSpan}`;
 
                 // Add the item to the new container after dimensions are known
