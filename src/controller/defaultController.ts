@@ -69,6 +69,9 @@ interface PaginatedResult {
 
 async function getAllFileNames(page: number = 1, limit: number = 10): Promise<PaginatedResult | Error> {
     try {
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir);
+        }
         const allFiles = fs.readdirSync(uploadDir).sort();
         const total = allFiles.length;
         const totalPages = Math.ceil(total / limit);
