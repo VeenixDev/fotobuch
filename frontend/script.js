@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 uploadStatus.className = 'success';
                 uploadForm.reset();
 
+                document.getElementById('image-container').innerHTML = ``;
+
                 // Append the newly uploaded images to the bottom of the grid
                 if (result.files && result.files.length > 0) {
                     const uploadedFileNames = result.files.map(file => file.filename);
