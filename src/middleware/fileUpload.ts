@@ -14,12 +14,24 @@ const storage = multer.diskStorage({
 		if (!fs.existsSync(uploadDir)) {
 			fs.mkdirSync(uploadDir);
 		}
+
+		if (!file.mimetype.startsWith('image')) {
+			return cb(new Error(`Invalid mimetype, expected "image" got "${file.mimetype}"`), uploadDir);
+		}
+
 		cb(null, uploadDir);
 	},
 	filename(req, file, cb) {
 		const extension = file.originalname.split('.');
 		const fileName = encodeURI(`${new Date().toISOString()}-${crypto.randomUUID()}.${extension[extension.length - 1]}`);
-		cb(null, encodeURI(fileName));
+
+		const encodedFileName = encodeURI(fileName);
+
+		if (!file.mimetype.startsWith('image')) {
+			return cb(new Error(`Invalid mimetype, expected "image" got "${file.mimetype}"`), encodedFileName);
+		}
+
+		cb(null, encodedFileName);
 	},
 });
 
