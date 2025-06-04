@@ -28,5 +28,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/sysvisual/sysvisual:latest
-            ghcr.io/sysvisual/sysvisual:${{ github.sha }}
+            ghcr.io/veenixdev/fotobuch:latest
+            ghcr.io/veenixdev/fotobuch:${{ github.sha }}
