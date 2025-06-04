@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 
-import { logRequest } from './middleware/logRequest';
 import { cors } from './middleware/cors';
 
 import promBundle from 'express-prom-bundle';
@@ -26,7 +25,7 @@ export default async function (): Promise<express.Express> {
             },
         })
     );
-    app.use(logRequest);
+
     app.use(express.json());
 
     if (Config.instance.config.environment !== 'LOCAL') {

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import {Config} from "../shared/common/config/config";
 import {Logger} from "../shared/common/logger";
 import fileUpload from "../middleware/fileUpload";
+import { logRequest } from "../middleware/logRequest";
 
 const router = express.Router();
 const uploadDir = Config.instance.config.fileUploadDest;
@@ -13,8 +14,10 @@ router.get('/', async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
 
     const fileNameResult = await getAllFileNames(page, limit);
+    logger.info('Processing request to get all images', {page, limit, fileNameResult});
 
     if (fileNameResult instanceof Error) {
+        logger.error('Error while getting all file names', {fileNameResult});
         res.sendStatus(500);
         return;
     }
@@ -22,24 +25,34 @@ router.get('/', async (req: Request, res: Response) => {
     res.status(200).json(fileNameResult);
 });
 
-router.get('/:imageName', async (req: Request, res: Response) => {
+router.get('/:imageName', logRequest, async (req: Request, res: Response) => {
     const imageName = req.params.imageName;
     if (!fs.existsSync(`${uploadDir}/${imageName}`)) {
+        logger.warn('Got request for non existing image', {imageName});
         res.sendStatus(404);
         return;
     }
 
-    res.sendFile(imageName, { root: uploadDir });
+    res.sendFile(imageName, {root: uploadDir});
 })
 
 router.post('/upload', fileUpload.array('images'), async (req: Request, res: Response) => {
     try {
         if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-            res.status(400).json({ error: 'No files uploaded' });
+            logger.warn('Got upload request with no files attached')
+            res.status(400).json({error: 'No files uploaded'});
             return;
         }
 
         const files = req.files as Express.Multer.File[];
+        logger.info('Processing request to get all images', {
+            files: files.map(f => ({
+                filename: f.filename,
+                originalname: f.originalname,
+                path: f.path,
+                size: f.size
+            })), count: files.length
+        });
 
         // Return information about the uploaded files
         res.status(201).json({
@@ -52,7 +65,7 @@ router.post('/upload', fileUpload.array('images'), async (req: Request, res: Res
         return;
     } catch (error) {
         logger.error('Error uploading files:', error);
-        res.status(500).json({ error: 'Failed to upload files' });
+        res.status(500).json({error: 'Failed to upload files'});
         return;
     }
 })
@@ -99,7 +112,7 @@ async function getAllFileNames(page: number = 1, limit: number = 10): Promise<Pa
         if (error instanceof Error) {
             return error;
         }
-        logger.error(error);
+        logger.error('Got error while getting all image names', {error, page, limit});
         throw error;
     }
 }
