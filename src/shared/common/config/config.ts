@@ -11,6 +11,7 @@ type ConfigValues = {
     host: string;
     fileUploadDest: string;
     environment: string;
+    frontendPath: string;
 };
 
 class MockConfig {
@@ -34,6 +35,7 @@ class Config {
             port: this.getRequiredValue('PORT'),
             host: this.getRequiredValue('HOST'),
             fileUploadDest: this.getRequiredValue('FILE_UPLOAD_DEST'),
+            frontendPath: this.getRequiredValue('FRONTEND_PATH'),
             environment: this.getRequiredValue('ENVIRONMENT'),
         };
     }

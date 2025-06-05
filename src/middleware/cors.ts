@@ -1,22 +1,26 @@
 import { NextFunction, Request, Response } from 'express';
 import { Config } from '../shared/common/config/config';
+import {Logger} from "../shared/common/logger";
+
+const logger = Logger.instance.getLogger();
 
 const cors = (req: Request, res: Response, next: NextFunction) => {
 	const host = Config.instance.config.host;
 
-	const remoteHost = (req.headers.origin ?? req.headers.referer)?.replace(
+	const remoteHost = (req.hostname ?? req.headers.origin ?? req.headers.referer)?.replace(
 		/\/$/,
 		''
 	);
 
 	if (
-		remoteHost !== undefined &&
-		host === remoteHost
+		(remoteHost !== undefined &&
+		host === remoteHost)
 	) {
 		res.setHeader('Access-Control-Allow-Origin', remoteHost);
 		req.headers['X-Domain'] = getDomain(remoteHost);
 		req.headers['X-Host'] = remoteHost;
 	} else {
+		logger.warn(`Unknown remote host '${remoteHost}'`, { host, domain: remoteHost === undefined ? undefined : getDomain(remoteHost) });
 		res.end();
 		return;
 	}

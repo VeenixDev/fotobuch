@@ -10,3 +10,21 @@ services:
       timeout: 15s
       retries: 10
       start_period: 10s
+
+  fotobuch:
+    image: fotobuch-local:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./upload:/upload
+    environment:
+      LOKI_HOST: http://loki
+      LOKI_PORT: 3100
+      PORT: 80
+      HOST: localhost
+      FILE_UPLOAD_DEST: /upload
+      ENVIRONMENT: PROD
+      FRONTEND_PATH: /frontend
+    depends_on:
+      - loki

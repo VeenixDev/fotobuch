@@ -6,6 +6,7 @@ import { cors } from './middleware/cors';
 import promBundle from 'express-prom-bundle';
 import defaultController from "./controller/defaultController";
 import {Config} from "./shared/common/config/config";
+import {logRequest} from "./middleware/logRequest";
 
 export default async function (): Promise<express.Express> {
     const app = express();
@@ -26,6 +27,7 @@ export default async function (): Promise<express.Express> {
         })
     );
 
+    app.use(logRequest)
     app.use(express.json());
 
     if (Config.instance.config.environment !== 'LOCAL') {
@@ -33,14 +35,14 @@ export default async function (): Promise<express.Express> {
     }
 
     // Serve frontend static files
-    app.use(express.static(path.join(__dirname, '../frontend')));
+    app.use(express.static(path.join(__dirname, Config.instance.config.frontendPath)));
 
     // API routes
     app.use('/api', defaultController);
 
     // Serve index.html for all other routes
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../frontend/index.html'));
+        res.sendFile(path.join(__dirname, `${Config.instance.config.frontendPath}/index.html`));
     });
 
     return app;
