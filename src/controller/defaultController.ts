@@ -1,8 +1,8 @@
-import express, {Request, Response} from "express";
+import express, { Request, Response } from 'express';
 import fs from 'node:fs';
 import {Config} from "../shared/common/config/config";
 import {Logger} from "../shared/common/logger";
-import fileUpload from "../middleware/fileUpload";
+import fileUpload, { addUploadErrorProtection } from '../middleware/fileUpload';
 import { logRequest } from "../middleware/logRequest";
 
 const router = express.Router();
@@ -14,7 +14,7 @@ router.get('/', async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
 
     const fileNameResult = await getAllFileNames(page, limit);
-    logger.info('Processing request to get all images', {page, limit, fileNameResult});
+    //logger.info('Processing request to get all images', {page, limit, fileNameResult});
 
     if (fileNameResult instanceof Error) {
         logger.error('Error while getting all file names', {fileNameResult});
@@ -25,7 +25,7 @@ router.get('/', async (req: Request, res: Response) => {
     res.status(200).json(fileNameResult);
 });
 
-router.get('/:imageName', logRequest, async (req: Request, res: Response) => {
+router.get('/:imageName', async (req: Request, res: Response) => {
     const imageName = req.params.imageName;
     if (!fs.existsSync(`${uploadDir}/${imageName}`)) {
         logger.warn('Got request for non existing image', {imageName});
@@ -36,14 +36,13 @@ router.get('/:imageName', logRequest, async (req: Request, res: Response) => {
     res.sendFile(imageName, {root: uploadDir});
 })
 
-router.post('/upload', fileUpload.array('images'), async (req: Request, res: Response) => {
+router.post('/upload', logRequest, addUploadErrorProtection, fileUpload.array('images'), async (req: Request, res: Response) => {
     try {
         if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
             logger.warn('Got upload request with no files attached')
             res.status(400).json({error: 'No files uploaded'});
             return;
         }
-
         const files = req.files as Express.Multer.File[];
         logger.info('Processing request to get all images', {
             files: files.map(f => ({
@@ -68,7 +67,7 @@ router.post('/upload', fileUpload.array('images'), async (req: Request, res: Res
         res.status(500).json({error: 'Failed to upload files'});
         return;
     }
-})
+});
 
 interface PaginatedResult {
     data: string[];

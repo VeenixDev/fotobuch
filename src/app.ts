@@ -27,15 +27,15 @@ export default async function (): Promise<express.Express> {
         })
     );
 
-    app.use(logRequest)
-    app.use(express.json());
-
     if (Config.instance.config.environment !== 'LOCAL') {
         app.use(cors);
     }
 
     // Serve frontend static files
     app.use(express.static(path.join(__dirname, Config.instance.config.frontendPath)));
+
+		app.use(logRequest);
+		app.use(express.json());
 
     // API routes
     app.use('/api', defaultController);

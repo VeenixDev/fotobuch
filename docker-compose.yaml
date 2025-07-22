@@ -24,7 +24,7 @@ services:
       PORT: 80
       HOST: localhost
       FILE_UPLOAD_DEST: /upload
-      ENVIRONMENT: PROD
+      ENVIRONMENT: LOCAL
       FRONTEND_PATH: /frontend
     depends_on:
       - loki
