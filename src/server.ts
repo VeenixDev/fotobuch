@@ -5,6 +5,7 @@ Config.instance.init();
 import { Logger } from './shared/common/logger';
 import http from 'http';
 import app from './app';
+import { imageDeduplication } from './jobs/imageDeduplication';
 
 const logger = Logger.instance.getLogger();
 
@@ -16,6 +17,8 @@ const logger = Logger.instance.getLogger();
     appServer.listen(SERVER_PORT, () => {
         logger.info(`App server is running.`);
     });
+
+		setInterval(imageDeduplication, 1000 * 60);
 })();
 
 process.addListener('SIGINT', () => {
